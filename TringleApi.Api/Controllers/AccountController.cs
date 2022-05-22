@@ -44,27 +44,15 @@ namespace TringleApi.Api.Controllers
             return BadRequest(new WebApiResponse<AccountResponse>(false, ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage).ToList().ToString()));
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<WebApiResponse<AccountResponse>>> GetAccount(Guid id)
+        [HttpGet("{accountNumber}")]
+        public async Task<ActionResult<WebApiResponse<AccountResponse>>> GetAccount(int accountNumber)
         {
-            var account = await _accountRepository.GetByDefault(x => x.Id == id);
+            var account = await _accountRepository.FindAccount(accountNumber);
             if (account != null)
             {
                 return Ok(new WebApiResponse<AccountResponse>(true, "Succes", _mapper.Map<AccountResponse>(account)));
             }
             return NotFound(new WebApiResponse<AccountResponse>(false, "There is not a account has a this id"));
-        }
-
-        [HttpGet]
-        public async Task<ActionResult<WebApiResponse<List<Account>>>> GetAccounts()
-        {
-            var accounts = await _accountRepository.GetAll();
-            if (accounts != null)
-            {
-                return Ok(new WebApiResponse<List<Account>>(true, "Succes", accounts));
-            }
-            return NotFound(new WebApiResponse<List<Account>>(false, "Error"));
-
         }
     }
 }
